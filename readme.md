@@ -1,4 +1,4 @@
-# FourDotPay GTM Infrastructure Summary
+# GTM Infrastructure Summary
 
 ## Overview & Core Components
 FourDotPay's GTM infrastructure automates lead capture, nurturing, and conversion across multiple audience segments using the following components:
