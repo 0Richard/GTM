@@ -1,17 +1,24 @@
 # GTM Infrastructure Summary
+
 Connectors Required
-|     | From      | To             |
-| --- | --------- | -------------- |
-| 1   | Facebook  | Dynamics       |
-| 2   | Instagram | Dynamics       |
-| 3   | Tiktok    | Dynamics       |
-| 4   | Mailchimp | Dynamics       |
-| 5   | Dynamics  | Mailchimp      |
-| 6   | Dynamics  | Power Automate |
+|      | From      | To        | Fallback |
+| :--- | :-------- | :-------- | :------- |
+| 1    | Facebook  | Dynamics  |          |
+| 2    | Instagram | Dynamics  |          |
+| 3    | Tiktok    | Dynamics  |          |
+| 4    | Mailchimp | Dynamics  |          |
+| 5    | Dynamics  | Mailchimp |          |
+| 6    | Dynamics  | BigQuery  |          |
+| 7    | GA4       | Dynamics  |          |
+
+1 . Connectors
+Fall Backs
+2 . Power Automate with Connector
+3 . Power Automate with API 
 
 ## Capabilities & Tools
 | Capability                  | Tool                          |
-| --------------------------- | ----------------------------- |
+| :-------------------------- | :---------------------------- |
 | Lead Capture & Segmentation | MS Dynamics 365               |
 | Workflow Automation         | Power Automate                |
 | Email Marketing & Analytics | Mailchimp                     |
@@ -21,14 +28,10 @@ Connectors Required
 | Reporting & Analytics       | Dynamics 365 & Mailchimp      |
 | GDPR Compliance             | Built into all systems        |
 
-
 Open Questions:
+
 1. Does Dynamics have triggers
-2. 
-
-
-
-
+2.
 
 ## Overview & Core Components
 
@@ -145,15 +148,14 @@ flowchart TD
 - Non-responders entered into "Spam Openers" journey
 - Targeted re-engagement emails for inactive leads
 
+### Tags for Creator Ecomony Journey
 
-### Tags for Creator Ecomony Journey:
 |      | Form Title Text                       | Button Text | Trigger                                     | Tags               |
 | :--- | :------------------------------------ | :---------- | :------------------------------------------ | :----------------- |
-| 1    |                                       |             | Send Button                                 | Onboarding-email   |
-| 2    | Learn more about the Creator Economy  | Get the PDF | Learn More Buttons  Header Sign Up Form     | creatorEconomyPDF  |
-| 3    | Learn more about Monetisation         | Get the PDF | All Learn More Buttons  Header Sign Up Form | payPerUsePDF       |
-| 4    | Learn More about Algorithm Proofing   | Get the PDF | All Learn More Buttons  Header Sign Up Form | beatTheAlgoPDF     |
-| 5    | Learn More About Owning Your Audience | Get the PDF | All Learn More Buttons  Header Sign Up Form | audienceControlPDF |
+| 1    | Learn more about the Creator Economy  | Get the PDF | Learn More Buttons  Header Sign Up Form     | creatorEconomyPDF  |
+| 2    | Learn more about Monetisation         | Get the PDF | All Learn More Buttons  Header Sign Up Form | payPerUsePDF       |
+| 3    | Learn More about Algorithm Proofing   | Get the PDF | All Learn More Buttons  Header Sign Up Form | beatTheAlgoPDF     |
+| 4    | Learn More About Owning Your Audience | Get the PDF | All Learn More Buttons  Header Sign Up Form | audienceControlPDF |
 
 ## Key Trigger Events
 
@@ -270,11 +272,7 @@ flowchart TD
 |     1     |  Resolved  |     5      |   Problem Solved    |
 |     2     |  Canceled  |     6      |      Canceled       |
 
-
-
-
 # Comprehensive Comparison: Mailchimp vs. Microsoft Dynamics 365 User Entity Models
-
 
 ## 1. Mailchimp User/Subscriber Entity Model
 
