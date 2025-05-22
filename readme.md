@@ -1,4 +1,34 @@
 # GTM Infrastructure Summary
+Connectors Required
+|     | From      | To             |
+| --- | --------- | -------------- |
+| 1   | Facebook  | Dynamics       |
+| 2   | Instagram | Dynamics       |
+| 3   | Tiktok    | Dynamics       |
+| 4   | Mailchimp | Dynamics       |
+| 5   | Dynamics  | Mailchimp      |
+| 6   | Dynamics  | Power Automate |
+
+## Capabilities & Tools
+| Capability                  | Tool                          |
+| --------------------------- | ----------------------------- |
+| Lead Capture & Segmentation | MS Dynamics 365               |
+| Workflow Automation         | Power Automate                |
+| Email Marketing & Analytics | Mailchimp                     |
+| Event Triggering            | Power Automate                |
+| Customer Journey Management | Dynamics 365 & Power Automate |
+| Data Synchronization        | Power Automate or Connectors  |
+| Reporting & Analytics       | Dynamics 365 & Mailchimp      |
+| GDPR Compliance             | Built into all systems        |
+
+
+Open Questions:
+1. Does Dynamics have triggers
+2. 
+
+
+
+
 
 ## Overview & Core Components
 
@@ -8,32 +38,26 @@ FourDotPay's GTM infrastructure automates lead capture, nurturing, and conversio
 - **Microsoft Power Automate**: Workflow automation and system integration
 - **Mailchimp**: Email campaign management and analytics
 
-## Data Flow Process
+## Idea Data Flow Process
 
 ```mermaid
 sequenceDiagram
     participant Lead
     participant CRM
-    participant PA as Automate
     participant EM as e-Mailer
     
-    Lead->>CRM: New lead captured
-    CRM->>PA: New lead trigger
-    PA->>EM: Start journey
-    EM->>Lead: Send email
+    Lead->>CRM: New lead captured [?]
+    CRM->>EM: New lead e-mail [PA]
+    EM->>Lead: Send email [e-Mail]
     
-    Lead->>EM: Open/click email
-    EM->>PA: Engagement event
-    PA->>CRM: Update record
+    Lead->>EM: Open/Click email [HTTP]
+    EM->>CRM:  Engagement event [?PA?]
     
-    EM->>PA: No engagement (X days)
-    PA->>EM: Trigger re-engagement
-    EM->>Lead: Re-engagement email
-    
-    Lead->>CRM: Conversion
-    CRM->>PA: Update journey
-    PA->>EM: Update preferences
+    CRM->>EM: No engagement (X days) Trigger re-engagement email [?PA?]
+    EM->>CRM:  Engagement event [?PA?]
 ```
+
+Triggers [New, Update or Time]
 
 ## Audience Segmentation
 
@@ -121,18 +145,15 @@ flowchart TD
 - Non-responders entered into "Spam Openers" journey
 - Targeted re-engagement emails for inactive leads
 
-## Capabilities & Tools
 
-| Capability                  | Tool                          |
-| --------------------------- | ----------------------------- |
-| Lead Capture & Segmentation | MS Dynamics 365               |
-| Workflow Automation         | Power Automate                |
-| Email Marketing & Analytics | Mailchimp                     |
-| Event Triggering            | Power Automate                |
-| Customer Journey Management | Dynamics 365 & Power Automate |
-| Data Synchronization        | Power Automate or Connectors  |
-| Reporting & Analytics       | Dynamics 365 & Mailchimp      |
-| GDPR Compliance             | Built into all systems        |
+### Tags for Creator Ecomony Journey:
+|      | Form Title Text                       | Button Text | Trigger                                     | Tags               |
+| :--- | :------------------------------------ | :---------- | :------------------------------------------ | :----------------- |
+| 1    |                                       |             | Send Button                                 | Onboarding-email   |
+| 2    | Learn more about the Creator Economy  | Get the PDF | Learn More Buttons  Header Sign Up Form     | creatorEconomyPDF  |
+| 3    | Learn more about Monetisation         | Get the PDF | All Learn More Buttons  Header Sign Up Form | payPerUsePDF       |
+| 4    | Learn More about Algorithm Proofing   | Get the PDF | All Learn More Buttons  Header Sign Up Form | beatTheAlgoPDF     |
+| 5    | Learn More About Owning Your Audience | Get the PDF | All Learn More Buttons  Header Sign Up Form | audienceControlPDF |
 
 ## Key Trigger Events
 
@@ -146,11 +167,17 @@ flowchart TD
 | Automation ID | Automation Name                        | Trigger [event or time]          | Action         | Source System          | Destination System | Connection Type | Data Fields                                             |
 | ------------: | -------------------------------------- | -------------------------------- | -------------- | ---------------------- | ------------------ | --------------- | ------------------------------------------------------- |
 |        JNY001 | MailChimp to Dynamic New Lead          | New Lead Record                  |                | Website (Facebook/Web) | Dynamics           | m2d1            | email_address, merge_fields.FNAME, merge_fields.LNAME   |
-|         JNY1a | Journey 1a: Order e-mail: 1,2,3,4      | New Lead in Dynamics with Tag =  | Send e-mail 1a | Power Automate         | Mailchimp          | d2m             | email_address, template_order [1,2,3,4]                 |
-|         JNY1b | Journey 1b: Order e-mail: 2,1,3,4      | New Lead in Dynamics             | Send e-mail 1b | Power Automate         | Mailchimp          | d2m             | email_address, template_order [2,1,3,4]                 |
-|         JNY1c | Journey 1c: Order e-mail: 3,1,2,4      | New Lead in Dynamics             | Send e-mail 1c | Power Automate         | Mailchimp          | d2m             | email_address, template_order [3,1,2,4]                 |
-|         JNY1d | Journey 1d: Order e-mail: 4,1,2,3      | New Lead in Dynamics             | Send e-mail 1d | Power Automate         | Mailchimp          | d2m             | email_address, template_order [4,1,2,3]                 |
-|        JNY002 | Mailchimp to Dynamics Analytics Stream | New Analytic Event  (open/click) |                | MS Dynamics 365        | Dynamics           | m2d2            | user_id,  contactid, subject, description, to[], from[] |
+|         JNY1a | Journey 1a: Order e-mail: 1            | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
+|         JNY1a | Journey 1a: Order e-mail: 2,           | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
+|         JNY1a | Journey 1a: Order e-mail: 3            | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
+|         JNY1a | Journey 1a: Order e-mail: 4            | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
+|         JNY1a | Journey 1a: Order e-mail: 1            | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
+|         JNY1b | Journey 1b: Order e-mail: 2            | New Lead in Dynamics with Tag =  | Send e-mail 1b | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [2,1,3,4]      |
+|         JNY1b | Journey 1b: Order e-mail: 3            | New Lead in Dynamics with Tag =  | Send e-mail 1b | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [2,1,3,4]      |
+|         JNY1b | Journey 1b: Order e-mail: 4            | New Lead in Dynamics with Tag =  | Send e-mail 1b | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [2,1,3,4]      |
+|         JNY1c | Journey 1c: Order e-mail: 3,1,2,4      | New Lead in Dynamics with Tag =  | Send e-mail 1c | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [3,1,2,4]      |
+|         JNY1d | Journey 1d: Order e-mail: 4,1,2,3      | New Lead in Dynamics with Tag =  | Send e-mail 1d | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [4,1,2,3]      |
+|        JNY002 | Mailchimp to Dynamics Analytics Stream | New Analytic Event  (open/click) |                | Dynamics               | Dynamics           | m2d2            | user_id,  contactid, subject, description, to[], from[] |
 |           ETC |                                        |                                  |                |                        |                    |                 |                                                         |
 
 ## Implementation Requirements
@@ -243,15 +270,11 @@ flowchart TD
 |     1     |  Resolved  |     5      |   Problem Solved    |
 |     2     |  Canceled  |     6      |      Canceled       |
 
-I'll search for more detailed information about both Mailchimp and Microsoft Dynamics user entity models, including tags, analytics, email endpoints, and related API commands.
 
-Now let me search for Microsoft Dynamics user entity model and related information.
 
-Let me search for more specific information about email and analytics features in Microsoft Dynamics.
 
 # Comprehensive Comparison: Mailchimp vs. Microsoft Dynamics 365 User Entity Models
 
-Based on my research, I've compiled an extensive comparison of both Mailchimp and Microsoft Dynamics 365 user entity models, including tags, analytics, email capabilities, and API endpoints.
 
 ## 1. Mailchimp User/Subscriber Entity Model
 
@@ -402,7 +425,9 @@ For Microsoft Dynamics 365:
 - [Dynamics 365 Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1)
 - [Microsoft Dataverse Web API Reference](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/reference/email)
 
-# Connectivity Flow Operations: Mailchimp ↔ Dynamics 365 Integration (with Documentation Links)
+-------
+
+# REQUIRED ONLY IS CONNECTORS ARE NOT AVAILABLE - Connectivity Flow Operations: Mailchimp ↔ Dynamics 365 Integration (with Documentation Links)
 
 ## 1. New User Record: Mailchimp → Dynamics 365 (m2d1)
 
