@@ -1,48 +1,59 @@
-# GTM Infrastructure Summary
+# GTM Design and System Architecture
 
-Connectors Required
-|      | From      | To        | Fallback |
-| :--- | :-------- | :-------- | :------- |
-| 1    | Facebook  | Dynamics  |          |
-| 2    | Instagram | Dynamics  |          |
-| 3    | Tiktok    | Dynamics  |          |
-| 4    | Mailchimp | Dynamics  |          |
-| 5    | Dynamics  | Mailchimp |          |
-| 6    | Dynamics  | BigQuery  |          |
-| 7    | GA4       | Dynamics  |          |
+## Overview & Guiding Principles
 
-1 . Connectors
-Fall Backs
-2 . Power Automate with Connector
-3 . Power Automate with API 
+Fourdotpay's GTM infrastructure automates lead capture, nurturing, and conversion across multiple audience segments using the following principles:
 
-## Capabilities & Tools
-| Capability                  | Tool                          |
-| :-------------------------- | :---------------------------- |
-| Lead Capture & Segmentation | MS Dynamics 365               |
-| Workflow Automation         | Power Automate                |
-| Email Marketing & Analytics | Mailchimp                     |
-| Event Triggering            | Power Automate                |
-| Customer Journey Management | Dynamics 365 & Power Automate |
-| Data Synchronization        | Power Automate or Connectors  |
-| Reporting & Analytics       | Dynamics 365 & Mailchimp      |
-| GDPR Compliance             | Built into all systems        |
+1. **Lead Capture**: Automate lead capture from various sources (Facebook, Instagram, LinkedIn, Website, CSV) into a single source of truth.
+2. **Automation**: Use a single tool to trigger workflows based on lead engagement and inactivity.
+3. **Data Modeling**: Use a single data model for data modeling and reporting.
+4. **Email Delivery**: Use a single tool for email delivery and analytics.
+5. **Reporting**: Use a single tool for reporting and analytics.
+6. **GDPR Compliance**: Ensure all systems are GDPR compliant.
 
-Open Questions:
 
-1. Does Dynamics have triggers
-2.
+## Marketing Needs
 
-## Overview & Core Components
+### Audience Segmentation
+- **Content Creators**: Targeted campaigns based on engagement and interests
+- **Website Agencies**: Focused on lead nurturing and conversion
+- **Enterprise Businesses**: Custom journeys to be defined
 
-FourDotPay's GTM infrastructure automates lead capture, nurturing, and conversion across multiple audience segments using the following components:
+### Customer Journeys
+#### Customer Journey Initial Journey
+1. **Content Creators**: 3-part journey (12 weeks total)
+  1. *Journey 1*: Creator Economy (4 emails, weekly)
+    1. *Journey 1a*: Order e-mail:  Start at tag: [1] then 2,3,4
+    2. *Journey 1b*: Order e-mail:  Start at tag: [2] then 1,3,4
+    3. *Journey 1c*: Order e-mail:  Start at tag: [3] then 1,2,4
+    4. *Journey 1d*: Order e-mail:  Start at tag: [4] then 1,2,3
+  2. *Journey 2*: Convince & Convert (4 emails, weekly)
+  3. *Journey 3*: Customer Value Chain (4 emails, weekly)
+2. **Website Agencies**: 1-part journey (2 weeks)
+  1. *Journey 1*: Creator Economy (3 emails, weekly)
+3. **Enterprise Businesses**: To be defined
 
-- **Microsoft Dynamics 365**: Central CRM and single source of truth
-- **Microsoft Power Automate**: Workflow automation and system integration
-- **Mailchimp**: Email campaign management and analytics
+#### Customer Journey Re-Engagement Journey
+**Re-engagement:**
 
-## Idea Data Flow Process
+1. Non-responders entered into "Spam Openers" journey
+2. Targeted re-engagement emails for inactive leads
 
+## GTM Engineering Architecture Design and Implementation
+
+### Tags Triggers for Creator Economy Journey (See ()[#### Customer Journey Initial Journey] )
+
+|      | Trigger                                     | Tags               |
+| :--- | :------------------------------------------ | :----------------- |
+| 1    | Learn More Buttons  Header Sign Up Form     | creatorEconomyPDF  |
+| 2    | All Learn More Buttons  Header Sign Up Form | payPerUsePDF       |
+| 3    | All Learn More Buttons  Header Sign Up Form | beatTheAlgoPDF     |
+| 4    | All Learn More Buttons  Header Sign Up Form | audienceControlPDF |
+
+
+## Flows and Outline
+
+### Lead Flow Process
 ```mermaid
 sequenceDiagram
     participant Lead
@@ -60,16 +71,7 @@ sequenceDiagram
     EM->>CRM:  Engagement event [?PA?]
 ```
 
-Triggers [New, Update or Time]
-
-## Audience Segmentation
-
-- **Content Creators**: Targeted campaigns based on engagement and interests
-- **Website Agencies**: Focused on lead nurturing and conversion
-- **Enterprise Businesses**: Custom journeys to be defined
-
-## System Architecture & Data Flow
-
+### System Architecture & Data Flow
 ```mermaid
 flowchart TD
     %% Lead Sources
@@ -84,7 +86,7 @@ flowchart TD
     %% Core Systems
     CRM["MS Dynamics 365"]
     PA["Power Automate"]
-    MC["Mailchimp"]
+    MC["Mailchimp e-mailing"]
     
     %% Event Triggers
     subgraph TR["Triggers"]
@@ -98,11 +100,9 @@ flowchart TD
     
     %% Data Flow
     LS --> CRM
-    CRM <--> PA
-    PA <--> MC
+    CRM <--> MC
     MC --> TR
-    TR --> PA
-    PA --> CRM
+    TR --> CRM
     
     %% Reporting
     subgraph RP["Reporting"]
@@ -127,35 +127,52 @@ flowchart TD
     MC <--> GD
 ```
 
-## Customer Journeys
 
-**Audience Segments:**
 
-- **Content Creators**: 3-part journey (12 weeks total)
-  - *Journey 1*: Creator Economy (4 emails, weekly)
-    - *Journey 1a*: Order e-mail:  1,2,3,4
-    - *Journey 1b*: Order e-mail:  2,1,3,4
-    - *Journey 1c*: Order e-mail:  3,1,2,4
-    - *Journey 1d*: Order e-mail:  4,1,2,3
-  - *Journey 2*: Convince & Convert (4 emails, weekly)
-  - *Journey 3*: Customer Value Chain (4 emails, weekly)
-- **Website Agencies**: 1-part journey (2 weeks)
-  - *Journey 1*: Creator Economy (3 emails, weekly)
-- **Enterprise Businesses**: To be defined
 
-**Re-engagement:**
 
-- Non-responders entered into "Spam Openers" journey
-- Targeted re-engagement emails for inactive leads
 
-### Tags for Creator Ecomony Journey
 
-|      | Form Title Text                       | Button Text | Trigger                                     | Tags               |
-| :--- | :------------------------------------ | :---------- | :------------------------------------------ | :----------------- |
-| 1    | Learn more about the Creator Economy  | Get the PDF | Learn More Buttons  Header Sign Up Form     | creatorEconomyPDF  |
-| 2    | Learn more about Monetisation         | Get the PDF | All Learn More Buttons  Header Sign Up Form | payPerUsePDF       |
-| 3    | Learn More about Algorithm Proofing   | Get the PDF | All Learn More Buttons  Header Sign Up Form | beatTheAlgoPDF     |
-| 4    | Learn More About Owning Your Audience | Get the PDF | All Learn More Buttons  Header Sign Up Form | audienceControlPDF |
+
+### Connectors Required
+|      | From      | To        | Fallback       |
+| :--- | :-------- | :-------- | :------------- |
+| 1    | Facebook  | Dynamics  | See list below |
+| 2    | Instagram | Dynamics  |                |
+| 3    | Tiktok    | Dynamics  |                |
+| 4    | Mailchimp | Dynamics  |                |
+| 5    | Dynamics  | Mailchimp |                |
+| 6    | Dynamics  | BigQuery  |                |
+| 7    | GA4       | Dynamics  |                |
+
+
+#### Fall Backs Options
+1. Connectors
+2. Power Automate with Connector
+3. Power Automate with API 
+
+### Capabilities & Tools
+| Capability                  | Tool                          |
+| :-------------------------- | :---------------------------- |
+| Lead Capture & Segmentation | MS Dynamics 365  or Mailchimp |
+| Workflow Automation         | Power Automate                |
+| Email Delivery              | Mailchimp                     |
+| Email Analytics             | Mailchimp                     |
+| Event Triggering            | Power Automate                |
+| Customer Journey Management | Dynamics 365 & Power Automate |
+| Data Synchronization        | Power Automate or Connectors  |
+| Reporting & Analytics       | Dynamics 365 & Mailchimp      |
+| GDPR Compliance             | Built into all systems        |
+
+Open Questions:
+
+1. Does Dynamics have triggers YES it has it's own workflow engine
+
+
+
+
+
+# Automation Overview
 
 ## Key Trigger Events
 
