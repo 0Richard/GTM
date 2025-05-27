@@ -11,67 +11,72 @@ Fourdotpay's GTM infrastructure automates lead capture, nurturing, and conversio
 5. **Reporting**: Use a single tool for reporting and analytics.
 6. **GDPR Compliance**: Ensure all systems are GDPR compliant.
 
-
 ## Marketing Needs
 
 ### Audience Segmentation
+
 - **Content Creators**: Targeted campaigns based on engagement and interests
 - **Website Agencies**: Focused on lead nurturing and conversion
 - **Enterprise Businesses**: Custom journeys to be defined
 
 ### Customer Journeys
+
 #### Customer Journey Initial Journey
+
 1. **Content Creators**: 3-part journey (12 weeks total)
-  1. *Journey 1*: Creator Economy (4 emails, weekly)
-    1. *Journey 1a*: Order e-mail:  Start at tag: [1] then 2,3,4
-    2. *Journey 1b*: Order e-mail:  Start at tag: [2] then 1,3,4
-    3. *Journey 1c*: Order e-mail:  Start at tag: [3] then 1,2,4
-    4. *Journey 1d*: Order e-mail:  Start at tag: [4] then 1,2,3
-  2. *Journey 2*: Convince & Convert (4 emails, weekly)
-  3. *Journey 3*: Customer Value Chain (4 emails, weekly)
+   1. _Journey 1_: Creator Economy (4 emails, weekly)
+      1. a_Journey: Order e-mail: Start at tag: [1] then 2,3,4
+      2. b_Journey: Order e-mail: Start at tag: [2] then 1,3,4
+      3. c_Journey: Order e-mail: Start at tag: [3] then 1,2,4
+      4. d_Journey: Order e-mail: Start at tag: [4] then 1,2,3
+   2. _Journey 2_: Convince & Convert (4 emails, weekly)
+   3. _Journey 3_: Customer Value Chain (4 emails, weekly)
 2. **Website Agencies**: 1-part journey (2 weeks)
-  1. *Journey 1*: Creator Economy (3 emails, weekly)
+   1. _Journey 1_: Creator Economy (3 emails, weekly)
 3. **Enterprise Businesses**: To be defined
 
 #### Customer Journey Re-Engagement Journey
+
 **Re-engagement:**
 
 1. Non-responders entered into "Spam Openers" journey
 2. Targeted re-engagement emails for inactive leads
 
+---
+
 ## GTM Engineering Architecture Design and Implementation
 
-### Tags Triggers for Creator Economy Journey (See ()[#### Customer Journey Initial Journey] )
+## Open Architecture & Design Questions
 
-|      | Trigger                                     | Tags               |
-| :--- | :------------------------------------------ | :----------------- |
-| 1    | Learn More Buttons  Header Sign Up Form     | creatorEconomyPDF  |
-| 2    | All Learn More Buttons  Header Sign Up Form | payPerUsePDF       |
-| 3    | All Learn More Buttons  Header Sign Up Form | beatTheAlgoPDF     |
-| 4    | All Learn More Buttons  Header Sign Up Form | audienceControlPDF |
-
+| #    | Question                                                                            | Response                   |
+| :--- | :---------------------------------------------------------------------------------- | :------------------------- |
+| 1    | Does Dynamics have triggers YES it has it's own workflow engine                     | Yes Processes or Workflows |
+| 2    | Does we have an automation thing includes a services of activities or single action |                            |
+| 3    | Should we update lead captures to go direct to Dynamics (currently in Mailchimp)    |                            |
 
 ## Flows and Outline
 
 ### Lead Flow Process
+
 ```mermaid
 sequenceDiagram
     participant Lead
     participant CRM
     participant EM as e-Mailer
-    
+
     Lead->>CRM: New lead captured [?]
     CRM->>EM: New lead e-mail [PA]
     EM->>Lead: Send email [e-Mail]
-    
+
     Lead->>EM: Open/Click email [HTTP]
     EM->>CRM:  Engagement event [?PA?]
-    
+
     CRM->>EM: No engagement (X days) Trigger re-engagement email [?PA?]
     EM->>CRM:  Engagement event [?PA?]
 ```
 
 ### System Architecture & Data Flow
+
 ```mermaid
 flowchart TD
     %% Lead Sources
@@ -82,12 +87,12 @@ flowchart TD
         Web["Website"]
         CSV["CSV"]
     end
-    
+
     %% Core Systems
     CRM["MS Dynamics 365"]
     PA["Power Automate"]
     MC["Mailchimp e-mailing"]
-    
+
     %% Event Triggers
     subgraph TR["Triggers"]
         NL["New Lead"]
@@ -97,45 +102,53 @@ flowchart TD
         NO["Not Opened"]
         IA["Inactive"]
     end
-    
+
     %% Data Flow
     LS --> CRM
     CRM <--> MC
     MC --> TR
     TR --> CRM
-    
+
     %% Reporting
     subgraph RP["Reporting"]
         CR["CRM Reports"]
         MA["MC Analytics"]
         FN["Funnel"]
     end
-    
+
     CRM --> CR
     MC --> MA
     CR --> FN
     MA --> FN
-    
+
     %% GDPR
     subgraph GD["GDPR"]
         CO["Consent"]
         PF["Preferences"]
         DR["Data Retention"]
     end
-    
+
     CRM <--> GD
     MC <--> GD
 ```
 
+### Capabilities & Tools Mapping
 
-
-
-
-
-
+| Capability                  | Tool                         |
+| :-------------------------- | :--------------------------- |
+| Lead Capture & Segmentation | MS Dynamics 365 or Mailchimp |
+| Workflow Automation         | Power Automate               |
+| Email Delivery              | Mailchimp                    |
+| Email Analytics             | Mailchimp                    |
+| Event Triggering            | Mailchimp & Dynamics 365     |
+| Customer Journey Management | Dynamics Workflow            |
+| Lead Synchronization        | Power Automate or Connectors |
+| Reporting & Analytics       | Dynamics 365 & Mailchimp     |
+| GDPR Compliance             | Built into all systems       |
 
 ### Connectors Required
-|      | From      | To        | Fallback       |
+
+| #    | From      | To        | Fallback       |
 | :--- | :-------- | :-------- | :------------- |
 | 1    | Facebook  | Dynamics  | See list below |
 | 2    | Instagram | Dynamics  |                |
@@ -144,35 +157,41 @@ flowchart TD
 | 5    | Dynamics  | Mailchimp |                |
 | 6    | Dynamics  | BigQuery  |                |
 | 7    | GA4       | Dynamics  |                |
+| 8    | GA4       | BigQuery  | In situ        |
 
+#### Connectors Fall Backs Options
 
-#### Fall Backs Options
 1. Connectors
 2. Power Automate with Connector
-3. Power Automate with API 
-
-### Capabilities & Tools
-| Capability                  | Tool                          |
-| :-------------------------- | :---------------------------- |
-| Lead Capture & Segmentation | MS Dynamics 365  or Mailchimp |
-| Workflow Automation         | Power Automate                |
-| Email Delivery              | Mailchimp                     |
-| Email Analytics             | Mailchimp                     |
-| Event Triggering            | Power Automate                |
-| Customer Journey Management | Dynamics 365 & Power Automate |
-| Data Synchronization        | Power Automate or Connectors  |
-| Reporting & Analytics       | Dynamics 365 & Mailchimp      |
-| GDPR Compliance             | Built into all systems        |
-
-Open Questions:
-
-1. Does Dynamics have triggers YES it has it's own workflow engine
-
-
-
-
+3. Power Automate with API
 
 # Automation Overview
+
+# Email Catalog
+
+| email_id             | email_name                     | Order | trigger_tag        | status          |
+| :------------------- | :----------------------------- | :---- | :----------------- | :-------------- |
+| EML-1.1-CC-CreEco    | Creator Economy Gated Content  | 1     | creatorEconomyPDF  | Being Redarfted |
+| EML-1.2-CC-CreEco    | Pay Per Use Gated Content      | 2     | payPerUsePDF       | Being Redarfted |
+| EML-1.3-CC-CreEco    | Beat The Algo Gated Content    | 3     | beatTheAlgoPDF     | Being Redarfted |
+| EML-1.4-CC-CreEco    | Audience Control Gated Content | 4     | audienceControlPDF | Being Redarfted |
+| EML-2.1-CC-Con&Con   | Rise of Micro-content          | 1     | CreEco_completion  | In Progress     |
+| EML-2.2-CC-Con&Con   | Payment Pain Points            | 2     | EML-2.1_sent       | In Progress     |
+| EML-2.3-CC-Con&Con   | Introducing FourDotPay         | 3     | EML-2.2_sent       | In Progress     |
+| EML-2.4-CC-Con&Con   | Getting Started Guide          | 4     | EML-2.3_sent       | In Progress     |
+| EML-3.1-CC-CustValue | TBD - Value Chain 1            | 1     | Con&Con_completion | Planned         |
+| EML-3.2-CC-CustValue | TBD - Value Chain 2            | 2     | EML-3.1_sent       | Planned         |
+| EML-3.3-CC-CustValue | TBD - Value Chain 3            | 3     | EML-3.2_sent       | Planned         |
+| EML-3.4-CC-CustValue | TBD - Value Chain 4            | 4     | EML-3.3_sent       | Planned         |
+| EML-4.1-WD-Scene     | Setting the Scene              | 1     | webAgencyTarget    | Planned         |
+| EML-4.2-WD-Prop      | Value Proposition              | 2     | EML-4.1_sent       | Planned         |
+| EML-4.3-WD-CaseStudy | Case Study                     | 3     | EML-4.2_sent       | Planned         |
+| EML-5.1-Re-Eng       | 3 Quick Questions              | 1     | nonResponder       | Planned         |
+| EML-5.2-Re-Eng       | Repeat of 1                    | 2     | EML-5.1_no_open    | Planned         |
+| EML-5.3-Re-Eng       | TBD - Final Attempt            | 3     | EML-5.2_no_open    | Planned         |
+| EML-5.4-Re-Eng       | Repeat of 3                    | 4     | EML-5.3_no_open    | Planned         |
+| EML-6.1-InactLead    | We Miss You                    | 1     | inactive30Days     | Planned         |
+| EML-6.2-InactLead    | Final Notice                   | 2     | EML-6.1_no_open    | Planned         |
 
 ## Key Trigger Events
 
@@ -183,60 +202,28 @@ Open Questions:
 
 ## Automation Catalog
 
-| Automation ID | Automation Name                        | Trigger [event or time]          | Action         | Source System          | Destination System | Connection Type | Data Fields                                             |
-| ------------: | -------------------------------------- | -------------------------------- | -------------- | ---------------------- | ------------------ | --------------- | ------------------------------------------------------- |
-|        JNY001 | MailChimp to Dynamic New Lead          | New Lead Record                  |                | Website (Facebook/Web) | Dynamics           | m2d1            | email_address, merge_fields.FNAME, merge_fields.LNAME   |
-|         JNY1a | Journey 1a: Order e-mail: 1            | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
-|         JNY1a | Journey 1a: Order e-mail: 2,           | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
-|         JNY1a | Journey 1a: Order e-mail: 3            | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
-|         JNY1a | Journey 1a: Order e-mail: 4            | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
-|         JNY1a | Journey 1a: Order e-mail: 1            | New Lead in Dynamics with Tag =  | Send e-mail 1a | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [1,2,3,4]      |
-|         JNY1b | Journey 1b: Order e-mail: 2            | New Lead in Dynamics with Tag =  | Send e-mail 1b | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [2,1,3,4]      |
-|         JNY1b | Journey 1b: Order e-mail: 3            | New Lead in Dynamics with Tag =  | Send e-mail 1b | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [2,1,3,4]      |
-|         JNY1b | Journey 1b: Order e-mail: 4            | New Lead in Dynamics with Tag =  | Send e-mail 1b | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [2,1,3,4]      |
-|         JNY1c | Journey 1c: Order e-mail: 3,1,2,4      | New Lead in Dynamics with Tag =  | Send e-mail 1c | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [3,1,2,4]      |
-|         JNY1d | Journey 1d: Order e-mail: 4,1,2,3      | New Lead in Dynamics with Tag =  | Send e-mail 1d | Dynamics               | Mailchimp          | d2m             | email_address, template_order, e-mail_ID [4,1,2,3]      |
-|        JNY002 | Mailchimp to Dynamics Analytics Stream | New Analytic Event  (open/click) |                | Dynamics               | Dynamics           | m2d2            | user_id,  contactid, subject, description, to[], from[] |
-|           ETC |                                        |                                  |                |                        |                    |                 |                                                         |
+| ID               | Step      | Action                       | Trigger event             | Source    | Destination | Connection Type | Data Fields                                            |
+| :--------------- | :-------- | :--------------------------- | :------------------------ | :-------- | :---------- | :-------------- | :----------------------------------------------------- |
+| Aut-01-New-Lead  | Capture   | Add new lead                 | New Lead Record           | Meta/Web  | Dynamics    | m2d1            | email_address, FNAME, LNAME, Date Created, Tag, Source |
+| Aut-02-Analytics | Analytics | Capture open/click events    | New Event (open/click)    | Mailchimp | Dynamics    | m2d2            | user_id, contactid, subject, description, to[], from[] |
+| Aut-101-CreEco-1 | 1/4       | Send email EML-1.1-CC-CreEco | tag=creatorEconomyPDF +0  | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-101-CreEco-1 | 2/4       | Send email EML-1.2-CC-CreEco | tag=creatorEconomyPDF +2  | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-101-CreEco-1 | 3/4       | Send email EML-1.3-CC-CreEco | tag=creatorEconomyPDF +4  | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-101-CreEco-1 | 4/4       | Send email EML-1.4-CC-CreEco | tag=creatorEconomyPDF +6  | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-102-CreEco-2 | 1/4       | Send email EML-1.2-CC-CreEco | tag=payPerUsePDF +0       | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-102-CreEco-2 | 2/4       | Send email EML-1.1-CC-CreEco | tag=payPerUsePDF +2       | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-102-CreEco-2 | 3/4       | Send email EML-1.3-CC-CreEco | tag=payPerUsePDF +4       | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-102-CreEco-2 | 4/4       | Send email EML-1.4-CC-CreEco | tag=payPerUsePDF +6       | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-103-CreEco-3 | 1/4       | Send email EML-1.3-CC-CreEco | tag=beatTheAlgoPDF +0     | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-103-CreEco-3 | 2/4       | Send email EML-1.1-CC-CreEco | tag=beatTheAlgoPDF +2     | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-103-CreEco-3 | 3/4       | Send email EML-1.2-CC-CreEco | tag=beatTheAlgoPDF +4     | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-103-CreEco-3 | 4/4       | Send email EML-1.4-CC-CreEco | tag=beatTheAlgoPDF +6     | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-104-CreEco-4 | 1/4       | Send email EML-1.3-CC-CreEco | tag=audienceControlPDF +0 | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-104-CreEco-4 | 2/4       | Send email EML-1.1-CC-CreEco | tag=audienceControlPDF +2 | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-104-CreEco-4 | 3/4       | Send email EML-1.2-CC-CreEco | tag=audienceControlPDF +4 | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| Aut-104-CreEco-4 | 4/4       | Send email EML-1.4-CC-CreEco | tag=audienceControlPDF +6 | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
 
-## Implementation Requirements
-
-### Microsoft Dynamics 365
-
-- Lead entity configuration with journey tracking fields
-- Power Automate integration
-- Custom reporting dashboards
-- GDPR compliance configuration
-
-### Power Automate
-
-- Workflow development for all triggers
-- System connections and error handling
-- Conditional logic for journey branching
-
-### Mailchimp
-
-- Campaign template and automation setup
-- API integration for data synchronization
-- Analytics configuration
-
-### Marketing
-
-- Email content development
-- Audience segmentation strategy
-- Performance metrics definition
-
-### Analytics
-
-- Funnel reporting
-- Lead attribution and engagement scoring
-
-## GDPR Compliance
-
-- Explicit consent capture and storage
-- Preference management center
-- Data retention policies
-- Right to be forgotten process
+---
 
 # Resources
 
@@ -288,8 +275,6 @@ Open Questions:
 |     0     |   Active   |     4      |     Researching     |
 |     1     |  Resolved  |     5      |   Problem Solved    |
 |     2     |  Canceled  |     6      |      Canceled       |
-
-# Comprehensive Comparison: Mailchimp vs. Microsoft Dynamics 365 User Entity Models
 
 ## 1. Mailchimp User/Subscriber Entity Model
 
@@ -367,7 +352,7 @@ Open Questions:
 | lastname       | String   | Last name              | [Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1) |
 | fullname       | String   | Full name (computed)   | [Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1) |
 | telephone1     | String   | Primary phone number   | [Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1) |
-| address1_*     | Various  | Primary address fields | [Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1) |
+| address1\_\*   | Various  | Primary address fields | [Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1) |
 | ownerid        | Lookup   | Owner of the record    | [Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1) |
 | createdon      | DateTime | Record creation date   | [Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1) |
 | modifiedon     | DateTime | Last modified date     | [Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1) |
@@ -440,7 +425,9 @@ For Microsoft Dynamics 365:
 - [Dynamics 365 Entity Reference](https://learn.microsoft.com/en-us/dynamics365/customerengagement/on-premises/developer/entities/email?view=op-9-1)
 - [Microsoft Dataverse Web API Reference](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/reference/email)
 
--------
+---
+
+---
 
 # REQUIRED ONLY IS CONNECTORS ARE NOT AVAILABLE - Connectivity Flow Operations: Mailchimp ↔ Dynamics 365 Integration (with Documentation Links)
 
@@ -505,7 +492,7 @@ For Microsoft Dynamics 365:
   "address1_country": "string", // Mailchimp merge_fields.ADDRESS.country
   "msdyn_contactkpiid": { // For analytics integration (optional)
     "@odata.type": "Microsoft.Dynamics.CRM.msdyn_contactkpi",
-    "msdyn_openrate": number, // Mailchimp stats.avg_open_rate 
+    "msdyn_openrate": number, // Mailchimp stats.avg_open_rate
     "msdyn_clickrate": number // Mailchimp stats.avg_click_rate
   },
   "customertypecode": 1 // 1=Customer, 2=Prospect
