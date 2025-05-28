@@ -172,7 +172,7 @@ flowchart TD
 
 | email_id                   | email_name                     | Order | trigger_tag        | status          |
 | :------------------------- | :----------------------------- | :---- | :----------------- | :-------------- |
-| eml-1.1-cc-creeco-creEco   | Creator Economy Gated Content  | 1     | creatorEconomyPDF  | Being Redarfted |
+| eml-1.1-cc-creeco-creeco   | Creator Economy Gated Content  | 1     | creatorEconomyPDF  | Being Redarfted |
 | eml-1.2-cc-creeco-pay      | Pay Per Use Gated Content      | 2     | payPerUsePDF       | Being Redarfted |
 | eml-1.3-cc-creeco-algo     | Beat The Algo Gated Content    | 3     | beatTheAlgoPDF     | Being Redarfted |
 | eml-1.4-cc-creeco-audience | Audience Control Gated Content | 4     | audienceControlPDF | Being Redarfted |
