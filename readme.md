@@ -6,10 +6,11 @@ Fourdotpay's GTM infrastructure automates lead capture, nurturing, and conversio
 
 1. **Lead Capture**: Automate lead capture from various sources (Facebook, Instagram, LinkedIn, Website, CSV) into a single source of truth.
 2. **Automation**: Use a single tool to trigger workflows based on lead engagement and inactivity.
-3. **Data Modeling**: Use a single data model for data modeling and reporting.
-4. **Email Delivery**: Use a single tool for email delivery and analytics.
-5. **Reporting**: Use a single tool for reporting and analytics.
-6. **GDPR Compliance**: Ensure all systems are GDPR compliant.
+3. **E-mail Authoring**: Use a single tool for email delivery and analytics.
+4. **Data Modeling**: Use a single data model for data modeling and reporting.
+5. **Email Delivery**: Use a single tool for email delivery and analytics. DELIVERABILITY IS A CONCERN.
+6. **Reporting**: Use a single tool for reporting and analytics.
+7. **GDPR Compliance**: Ensure all systems are GDPR compliant.
 
 ## Marketing Needs
 
@@ -169,29 +170,29 @@ flowchart TD
 
 # Email Catalog
 
-| email_id             | email_name                     | Order | trigger_tag        | status          |
-| :------------------- | :----------------------------- | :---- | :----------------- | :-------------- |
-| EML-1.1-CC-CreEco    | Creator Economy Gated Content  | 1     | creatorEconomyPDF  | Being Redarfted |
-| EML-1.2-CC-CreEco    | Pay Per Use Gated Content      | 2     | payPerUsePDF       | Being Redarfted |
-| EML-1.3-CC-CreEco    | Beat The Algo Gated Content    | 3     | beatTheAlgoPDF     | Being Redarfted |
-| EML-1.4-CC-CreEco    | Audience Control Gated Content | 4     | audienceControlPDF | Being Redarfted |
-| EML-2.1-CC-Con&Con   | Rise of Micro-content          | 1     | CreEco_completion  | In Progress     |
-| EML-2.2-CC-Con&Con   | Payment Pain Points            | 2     | EML-2.1_sent       | In Progress     |
-| EML-2.3-CC-Con&Con   | Introducing FourDotPay         | 3     | EML-2.2_sent       | In Progress     |
-| EML-2.4-CC-Con&Con   | Getting Started Guide          | 4     | EML-2.3_sent       | In Progress     |
-| EML-3.1-CC-CustValue | TBD - Value Chain 1            | 1     | Con&Con_completion | Planned         |
-| EML-3.2-CC-CustValue | TBD - Value Chain 2            | 2     | EML-3.1_sent       | Planned         |
-| EML-3.3-CC-CustValue | TBD - Value Chain 3            | 3     | EML-3.2_sent       | Planned         |
-| EML-3.4-CC-CustValue | TBD - Value Chain 4            | 4     | EML-3.3_sent       | Planned         |
-| EML-4.1-WD-Scene     | Setting the Scene              | 1     | webAgencyTarget    | Planned         |
-| EML-4.2-WD-Prop      | Value Proposition              | 2     | EML-4.1_sent       | Planned         |
-| EML-4.3-WD-CaseStudy | Case Study                     | 3     | EML-4.2_sent       | Planned         |
-| EML-5.1-Re-Eng       | 3 Quick Questions              | 1     | nonResponder       | Planned         |
-| EML-5.2-Re-Eng       | Repeat of 1                    | 2     | EML-5.1_no_open    | Planned         |
-| EML-5.3-Re-Eng       | TBD - Final Attempt            | 3     | EML-5.2_no_open    | Planned         |
-| EML-5.4-Re-Eng       | Repeat of 3                    | 4     | EML-5.3_no_open    | Planned         |
-| EML-6.1-InactLead    | We Miss You                    | 1     | inactive30Days     | Planned         |
-| EML-6.2-InactLead    | Final Notice                   | 2     | EML-6.1_no_open    | Planned         |
+| email_id                   | email_name                     | Order | trigger_tag        | status          |
+| :------------------------- | :----------------------------- | :---- | :----------------- | :-------------- |
+| eml-1.1-cc-creeco-creEco   | Creator Economy Gated Content  | 1     | creatorEconomyPDF  | Being Redarfted |
+| eml-1.2-cc-creeco-pay      | Pay Per Use Gated Content      | 2     | payPerUsePDF       | Being Redarfted |
+| eml-1.3-cc-creeco-algo     | Beat The Algo Gated Content    | 3     | beatTheAlgoPDF     | Being Redarfted |
+| eml-1.4-cc-creeco-audience | Audience Control Gated Content | 4     | audienceControlPDF | Being Redarfted |
+| eml-2.1-cc-con&con         | Rise of Micro-content          | 1     | CreEco_completion  | In Progress     |
+| eml-2.2-cc-con&con         | Payment Pain Points            | 2     | EML-2.1_sent       | In Progress     |
+| eml-2.3-cc-con&con         | Introducing FourDotPay         | 3     | EML-2.2_sent       | In Progress     |
+| eml-2.4-cc-con&con         | Getting Started Guide          | 4     | EML-2.3_sent       | In Progress     |
+| eml-3.1-cc-custvalue-xxx   | TBD - Value Chain 1            | 1     | Con&Con_completion | Planned         |
+| eml-3.2-cc-custvalue-xxx   | TBD - Value Chain 2            | 2     | EML-3.1_sent       | Planned         |
+| eml-3.3-cc-custvalue-xxx   | TBD - Value Chain 3            | 3     | EML-3.2_sent       | Planned         |
+| eml-3.4-cc-custvalue-xxx   | TBD - Value Chain 4            | 4     | EML-3.3_sent       | Planned         |
+| eml-4.1-wd-scene           | Setting the Scene              | 1     | webAgencyTarget    | Planned         |
+| eml-4.2-wd-prop            | Value Proposition              | 2     | EML-4.1_sent       | Planned         |
+| eml-4.3-wd-casestudy       | Case Study                     | 3     | EML-4.2_sent       | Planned         |
+| eml-5.1-re-eng-xxx         | 3 Quick Questions              | 1     | nonResponder       | Planned         |
+| eml-5.2-re-eng-xxx         | Repeat of 1                    | 2     | EML-5.1_no_open    | Planned         |
+| eml-5.3-re-eng-xxx         | TBD - Final Attempt            | 3     | EML-5.2_no_open    | Planned         |
+| eml-5.4-re-eng-xxx         | Repeat of 3                    | 4     | EML-5.3_no_open    | Planned         |
+| eml-6.1-inactlead          | We Miss You                    | 1     | inactive30Days     | Planned         |
+| eml-6.2-inactlead          | Final Notice                   | 2     | EML-6.1_no_open    | Planned         |
 
 ## Key Trigger Events
 
