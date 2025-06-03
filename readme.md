@@ -47,14 +47,6 @@ Fourdotpay's GTM infrastructure automates lead capture, nurturing, and conversio
 
 ## GTM Engineering Architecture Design and Implementation
 
-## Open Architecture & Design Questions
-
-| #    | Question                                                                            | Response                   |
-| :--- | :---------------------------------------------------------------------------------- | :------------------------- |
-| 1    | Does Dynamics have triggers YES it has it's own workflow engine                     | Yes Processes or Workflows |
-| 2    | Does we have an automation thing includes a services of activities or single action |                            |
-| 3    | Should we update lead captures to go direct to Dynamics (currently in Mailchimp)    |                            |
-
 ## Flows and Outline
 
 ### Lead Flow Process
@@ -62,18 +54,20 @@ Fourdotpay's GTM infrastructure automates lead capture, nurturing, and conversio
 ```mermaid
 sequenceDiagram
     participant Lead
-    participant CRM
-    participant EM as e-Mailer
+    participant DCRM as Dynamics CRM
+    participant MC as Mailchimp
+    participant EM as Mandril
 
-    Lead->>CRM: New lead captured [?]
-    CRM->>EM: New lead e-mail [PA]
+    Lead->>MC: New lead captured [Form]
+    MC->>DCRM: Create new lead record [WEBHOOK: e-Mail, FNAME, LNAME, Source]
+    DCRM->>EM: New lead e-mail []
     EM->>Lead: Send email [e-Mail]
 
     Lead->>EM: Open/Click email [HTTP]
-    EM->>CRM:  Engagement event [?PA?]
+    EM->>DCRM:  Engagement event [Webhook]
 
-    CRM->>EM: No engagement (X days) Trigger re-engagement email [?PA?]
-    EM->>CRM:  Engagement event [?PA?]
+    DCRM->>EM: No engagement (x days) Trigger re-engagement email []
+    EM->>DCRM:  Engagement event []
 ```
 
 ### System Architecture & Data Flow
@@ -90,9 +84,9 @@ flowchart TD
     end
 
     %% Core Systems
-    CRM["MS Dynamics 365"]
-    PA["Power Automate"]
-    MC["Mailchimp e-mailing"]
+    DCRM["MS Dynamics 365"]
+    MC["Mailchimp"]
+    EM["Mandrill"]
 
     %% Event Triggers
     subgraph TR["Triggers"]
@@ -105,10 +99,11 @@ flowchart TD
     end
 
     %% Data Flow
-    LS --> CRM
-    CRM <--> MC
+    LS --> DCRM
+    DCRM <--> MC
+    DCRM <--> EM
     MC --> TR
-    TR --> CRM
+    TR --> DCRM
 
     %% Reporting
     subgraph RP["Reporting"]
@@ -134,21 +129,19 @@ flowchart TD
 ```
 
 ### Capabilities & Tools Mapping
-
-| Capability                  | Tool                         |
-| :-------------------------- | :--------------------------- |
-| Lead Capture & Segmentation | MS Dynamics 365 or Mailchimp |
-| Workflow Automation         | Power Automate               |
-| Email Delivery              | Mailchimp                    |
-| Email Analytics             | Mailchimp                    |
-| Event Triggering            | Mailchimp & Dynamics 365     |
-| Customer Journey Management | Dynamics Workflow            |
-| Lead Synchronization        | Power Automate or Connectors |
-| Reporting & Analytics       | Dynamics 365 & Mailchimp     |
-| GDPR Compliance             | Built into all systems       |
+| Capability                  | Tool                       | Notes               |
+| :-------------------------- | :------------------------- | :------------------ |
+| Lead Capture & Segmentation | Mailchimp                  | Migrate to Dynamics |
+| Workflow Automation         | Power Automate & MailChimp | Migrate to Dynamics |
+| Email Delivery              | Mandrill                   |                     |
+| Email Analytics             | Mandrill                   |                     |
+| Event Triggering            | Mandrill                   |                     |
+| Customer Journey Management | Dynamics Workflow          |                     |
+| Lead Synchronization        | Power Automate Webhook     |                     |
+| Reporting & Analytics       | Dynamics                   |                     |
+| GDPR Compliance             | Built into all systems     |                     |
 
 ### Connectors Required
-
 | #    | From      | To        | Fallback       |
 | :--- | :-------- | :-------- | :------------- |
 | 1    | Facebook  | Dynamics  | See list below |
@@ -160,69 +153,61 @@ flowchart TD
 | 7    | GA4       | Dynamics  |                |
 | 8    | GA4       | BigQuery  | In situ        |
 
-#### Connectors Fall Backs Options
-
-1. Connectors
-2. Power Automate with Connector
-3. Power Automate with API
 
 # Automation Overview
 
 # Email Catalog
-
-| email_id                   | email_name                     | Order | trigger_tag        | status          |
-| :------------------------- | :----------------------------- | :---- | :----------------- | :-------------- |
-| eml-1.1-cc-creeco-creeco   | Creator Economy Gated Content  | 1     | creatorEconomyPDF  | Being Redarfted |
-| eml-1.2-cc-creeco-pay      | Pay Per Use Gated Content      | 2     | payPerUsePDF       | Being Redarfted |
-| eml-1.3-cc-creeco-algo     | Beat The Algo Gated Content    | 3     | beatTheAlgoPDF     | Being Redarfted |
-| eml-1.4-cc-creeco-audience | Audience Control Gated Content | 4     | audienceControlPDF | Being Redarfted |
-| eml-2.1-cc-con&con         | Rise of Micro-content          | 1     | CreEco_completion  | In Progress     |
-| eml-2.2-cc-con&con         | Payment Pain Points            | 2     | EML-2.1_sent       | In Progress     |
-| eml-2.3-cc-con&con         | Introducing FourDotPay         | 3     | EML-2.2_sent       | In Progress     |
-| eml-2.4-cc-con&con         | Getting Started Guide          | 4     | EML-2.3_sent       | In Progress     |
-| eml-3.1-cc-custvalue-xxx   | TBD - Value Chain 1            | 1     | Con&Con_completion | Planned         |
-| eml-3.2-cc-custvalue-xxx   | TBD - Value Chain 2            | 2     | EML-3.1_sent       | Planned         |
-| eml-3.3-cc-custvalue-xxx   | TBD - Value Chain 3            | 3     | EML-3.2_sent       | Planned         |
-| eml-3.4-cc-custvalue-xxx   | TBD - Value Chain 4            | 4     | EML-3.3_sent       | Planned         |
-| eml-4.1-wd-scene           | Setting the Scene              | 1     | webAgencyTarget    | Planned         |
-| eml-4.2-wd-prop            | Value Proposition              | 2     | EML-4.1_sent       | Planned         |
-| eml-4.3-wd-casestudy       | Case Study                     | 3     | EML-4.2_sent       | Planned         |
-| eml-5.1-re-eng-xxx         | 3 Quick Questions              | 1     | nonResponder       | Planned         |
-| eml-5.2-re-eng-xxx         | Repeat of 1                    | 2     | EML-5.1_no_open    | Planned         |
-| eml-5.3-re-eng-xxx         | TBD - Final Attempt            | 3     | EML-5.2_no_open    | Planned         |
-| eml-5.4-re-eng-xxx         | Repeat of 3                    | 4     | EML-5.3_no_open    | Planned         |
-| eml-6.1-inactlead          | We Miss You                    | 1     | inactive30Days     | Planned         |
-| eml-6.2-inactlead          | Final Notice                   | 2     | EML-6.1_no_open    | Planned         |
-
-## Key Trigger Events
-
-- New record created in CRM
-- Email sent/opened/clicked
-- Email not opened after X days
-- No activity after X period
+| email_id                      | email_name                     | Step | status      |
+| :---------------------------- | :----------------------------- | :--- | :---------- |
+| eml-1.1-cc-creeco-creEco      | Creator Economy Gated Content  | 1/4  | Live        |
+| eml-1.2-cc-creeco-pay         | Pay Per Use Gated Content      | 2/4  | Live        |
+| eml-1.3-cc-creeco-algo        | Beat The Algo Gated Content    | 3/4  | Live        |
+| eml-1.4-cc-creeco-audience    | Audience Control Gated Content | 4/4  | Live        |
+| eml-2.1-cc-con&con-rise       | Rise of Micro-content          | 1/4  | In Progress |
+| eml-2.2-cc-con&con-pain       | Payment Pain Points            | 2/4  | In Progress |
+| eml-2.3-cc-con&con-intr       | Introducing FourDotPay         | 3/4  | In Progress |
+| eml-2.4-cc-con&con-getstarted | Getting Started Guide          | 4/4  | In Progress |
+| eml-3.1-cc-custvalue-xxx      | TBD - Value Chain 1            | 1/4  | Planned     |
+| eml-3.2-cc-custvalue-xxx      | TBD - Value Chain 2            | 2/4  | Planned     |
+| eml-3.3-cc-custvalue-xxx      | TBD - Value Chain 3            | 3/4  | Planned     |
+| eml-3.4-cc-custvalue-xxx      | TBD - Value Chain 4            | 4/4  | Planned     |
+| eml-4.1-wd-scene              | Setting the Scene              | 1/3  | Planned     |
+| eml-4.2-wd-prop               | Value Proposition              | 2/3  | Planned     |
+| eml-4.3-wd-casestudy          | Case Study                     | 3/3  | Planned     |
+| eml-5.1-re-eng-xxx            | 3 Quick Questions              | 1    | Planned     |
+| eml-5.2-re-eng-xxx            | Repeat of 1                    | 2    | Planned     |
+| eml-5.3-re-eng-xxx            | TBD - Final Attempt            | 3    | Planned     |
+| eml-5.4-re-eng-xxx            | Repeat of 3                    | 4    | Planned     |
+| eml-6.1-inactlead             | We Miss You                    | 1    | Planned     |
+| eml-6.2-inactlead             | Final Notice                   | 2    | Planned     |
 
 ## Automation Catalog
+> Note: Publisher = Fourdotzero and Solution = Fourdotzero_MarketingOps. Use Envars and built in Sandbox Dynamics & then once tested promote to Dynamics Production.
 
-| ID               | Step      | Action                       | Trigger event             | Source    | Destination | Connection Type | Data Fields                                            |
-| :--------------- | :-------- | :--------------------------- | :------------------------ | :-------- | :---------- | :-------------- | :----------------------------------------------------- |
-| Aut-01-New-Lead  | Capture   | Add new lead                 | New Lead Record           | Meta/Web  | Dynamics    | m2d1            | email_address, FNAME, LNAME, Date Created, Tag, Source |
-| Aut-02-Analytics | Analytics | Capture open/click events    | New Event (open/click)    | Mailchimp | Dynamics    | m2d2            | user_id, contactid, subject, description, to[], from[] |
-| Aut-101-CreEco-1 | 1/4       | Send email EML-1.1-CC-CreEco | tag=creatorEconomyPDF +0  | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-101-CreEco-1 | 2/4       | Send email EML-1.2-CC-CreEco | tag=creatorEconomyPDF +2  | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-101-CreEco-1 | 3/4       | Send email EML-1.3-CC-CreEco | tag=creatorEconomyPDF +4  | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-101-CreEco-1 | 4/4       | Send email EML-1.4-CC-CreEco | tag=creatorEconomyPDF +6  | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-102-CreEco-2 | 1/4       | Send email EML-1.2-CC-CreEco | tag=payPerUsePDF +0       | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-102-CreEco-2 | 2/4       | Send email EML-1.1-CC-CreEco | tag=payPerUsePDF +2       | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-102-CreEco-2 | 3/4       | Send email EML-1.3-CC-CreEco | tag=payPerUsePDF +4       | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-102-CreEco-2 | 4/4       | Send email EML-1.4-CC-CreEco | tag=payPerUsePDF +6       | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-103-CreEco-3 | 1/4       | Send email EML-1.3-CC-CreEco | tag=beatTheAlgoPDF +0     | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-103-CreEco-3 | 2/4       | Send email EML-1.1-CC-CreEco | tag=beatTheAlgoPDF +2     | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-103-CreEco-3 | 3/4       | Send email EML-1.2-CC-CreEco | tag=beatTheAlgoPDF +4     | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-103-CreEco-3 | 4/4       | Send email EML-1.4-CC-CreEco | tag=beatTheAlgoPDF +6     | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-104-CreEco-4 | 1/4       | Send email EML-1.3-CC-CreEco | tag=audienceControlPDF +0 | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-104-CreEco-4 | 2/4       | Send email EML-1.1-CC-CreEco | tag=audienceControlPDF +2 | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-104-CreEco-4 | 3/4       | Send email EML-1.2-CC-CreEco | tag=audienceControlPDF +4 | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
-| Aut-104-CreEco-4 | 4/4       | Send email EML-1.4-CC-CreEco | tag=audienceControlPDF +6 | Dynamics  | Mailchimp   | d2m             | email_address, e-mail_ID                               |
+| ID                | Status    | Solution / Flow                           | Action                             | Trigger event (+ days)    | Source    | Destination | Connection Type | Data Fields                                            |
+| :---------------- | :-------- | :---------------------------------------- | :--------------------------------- | :------------------------ | :-------- | :---------- | :-------------- | :----------------------------------------------------- |
+| aut-01-new-lead   | Capture   |                                           | Add new lead                       | New Lead Record           | Meta/Web  | Dynamics    | m2d1            | email_address, FNAME, LNAME, Date Created, Tag, Source |
+| aut-02-analytics  | Analytics |                                           | Capture open/click events          | New Event (open/click)    | Mailchimp | Dynamics    | m2d2            | user_id, contactid, subject, description, to[], from[] |
+| aut-101-creeco-1  | Live      | Mailchimp: Journey 1: Creator Economy     | Send eml-1.1-cc-creeco             | tag=creatorEconomyPDF +0  | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-101-creeco-2  | Live      | Mailchimp: Journey 1: Creator Economy     | Send eml-1.2-cc-creeco             | tag=creatorEconomyPDF +2  | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-101-creeco-3  | Live      | Mailchimp: Journey 1: Creator Economy     | Send eml-1.3-cc-creeco             | tag=creatorEconomyPDF +4  | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-101-creeco-4  | Live      | Mailchimp: Journey 1: Creator Economy     | Send eml-1.4-cc-creeco             | tag=creatorEconomyPDF +6  | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-102-creeco-1  | Live      | Mailchimp: Journey 2: Pay Per Use         | Send eml-1.2-cc-creeco             | tag=payPerUsePDF +0       | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-102-creeco-2  | Live      | Mailchimp: Journey 2: Pay Per Use         | Send eml-1.1-cc-creeco             | tag=payPerUsePDF +2       | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-102-creeco-3  | Live      | Mailchimp: Journey 2: Pay Per Use         | Send eml-1.3-cc-creeco             | tag=payPerUsePDF +4       | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-102-creeco-4  | Live      | Mailchimp: Journey 2: Pay Per Use         | Send eml-1.4-cc-creeco             | tag=payPerUsePDF +6       | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-103-creeco-1  | Live      | Mailchimp: Journey 3: Beat the Algo       | Send eml-1.3-cc-creeco             | tag=beatTheAlgoPDF +0     | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-103-creeco-2  | Live      | Mailchimp: Journey 3: Beat the Algo       | Send eml-1.1-cc-creeco             | tag=beatTheAlgoPDF +2     | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-103-creeco-3  | Live      | Mailchimp: Journey 3: Beat the Algo       | Send eml-1.2-cc-creeco             | tag=beatTheAlgoPDF +4     | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-103-creeco-4  | Live      | Mailchimp: Journey 3: Beat the Algo       | Send eml-1.4-cc-creeco             | tag=beatTheAlgoPDF +6     | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-104-creeco-1  | Live      | Mailchimp : Journey 4 Creator Economy     | Send eml-1.3-cc-creeco             | tag=audienceControlPDF +0 | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-104-creeco-2  | Live      | Mailchimp : Journey 4 Creator Economy     | Send eml-1.1-cc-creeco             | tag=audienceControlPDF +2 | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-104-creeco-3  | Live      | Mailchimp : Journey 4 Creator Economy     | Send eml-1.2-cc-creeco             | tag=audienceControlPDF +4 | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-104-creeco-4  | Live      | Mailchimp : Journey 4 Creator Economy     | Send eml-1.4-cc-creeco             | tag=audienceControlPDF +6 | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-201-con&con-1 | 1/4       | Dynamics:Fourdotzero_MarketingOps/con&con | Send eml-2.1-cc-con&con-rise       | creeco_completion +2      | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-201-con&con-2 | 2/4       | Dynamics:Fourdotzero_MarketingOps/con&con | Send eml-2.2-cc-con&con-pain       | creeco_completion +4      | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-201-con&con-3 | 3/4       | Dynamics:Fourdotzero_MarketingOps/con&con | Send eml-2.3-cc-con&con-intr       | creeco_completion +6      | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
+| aut-201-con&con-4 | 4/4       | Dynamics:Fourdotzero_MarketingOps/con&con | Send eml-2.4-cc-con&con-getstarted | creeco_completion +8      | Dynamics  | Mandrill    | Mandrill API    | email_address, e-mail_ID                               |
 
 ---
 
